@@ -1,0 +1,383 @@
+openapi: 3.0.3
+info:
+  title: Swagger - Patients Hub - Team 4
+  description: |-
+    A RESTful API for a hospital.
+
+
+    Project link:
+    - [GitHub repository](https://github.com/CegekaJavaAcademy2023/be-patients-board-4)
+  version: 1.0.0
+
+
+servers:
+  - url: http://localhost:8080
+tags:
+  - name: function
+    description: Employees' roles to select from when creating a new account for someone from the hospital staff
+  - name: type-of-insurance
+    description: Different types of health insurance plans to select from when adding a new patient
+  - name: patient-file
+    description: Operations on patient files
+  - name: patient
+    description: Access hospitalized patients
+  - name: rooms
+    description: Access room details
+  - name: specializations
+    description: Medical specialities in the hospital
+paths:
+  /functions:
+    get:
+      tags:
+        - function
+      summary: Retrieve a list of all hospital staff roles
+      operationId: "getAllFunctions"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Function'
+  /patient-file:
+    post:
+      tags:
+        - patient-file
+      summary: Save a patient file
+      operationId: "savePatientFile"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatientFileDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+  /patient-file/{id}:
+    put:
+      tags:
+        - patient-file
+      summary: Update a patient file
+      operationId: "updatePatientFile"
+      parameters:
+      - name: "id"
+        in: "path"
+        required: true
+        schema:
+          type: "integer"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatientFileDTO"
+        required: true
+      responses:
+        "200":
+          description: "OK"
+  /patient-files:
+    get:
+      tags:
+      - patient-file
+      summary: Retrieve a list of all patient files
+      operationId: "getAllPatientFiles"
+      parameters:
+        - name: specializationId
+          in: query
+          description: The medical speciality where the patient is hospitalized
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientFileDTO'
+  /patient-files/{id}:
+    get:
+      tags:
+      - patient-file
+      summary: Retrieve a single patient file based on ID
+      parameters:
+        - name: id
+          in: path
+          description: ID of patient file to return
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PatientFileDTO'
+  /type-of-insurance:
+    get:
+      tags:
+      - type-of-insurance
+      summary: Retrieve a list of all types of insurance that a patient can have
+      operationId: "getAllTypeOfInsurance"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InsuranceType'
+  /patients:
+    get:
+      tags:
+        - patient
+      summary: Retrieve a list of all hospitalized patients
+      operationId: "getPatients"
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PatientDTO'
+  /patients/{cnp}:
+    get:
+      tags:
+        - patient
+      summary: Retrieve a list of all hospitalized patients
+      operationId: "getPatientByCnp"
+      parameters:
+        - name: "cnp"
+          in: "path"
+          required: true
+          schema:
+            type: "integer"
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/PatientDTO'
+  /rooms/occupancy:
+    get:
+      tags:
+        - rooms
+      summary: Retrieve the hospital bed occupancy level
+      operationId: "getOccupancy"
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/RoomOccupancy'
+  /specializations:
+    get:
+      tags:
+        - specializations
+      summary: Retrieve all medical specialities
+      operationId: "getSpecializations"
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Specialization'
+  /specializations/{id}:
+    get:
+      tags:
+        - specializations
+      summary: Retrieve a single one based on ID
+      operationId: "getSpecialization"
+      parameters:
+        - name: id
+          in: path
+          description: ID of specialization to return
+          required: true
+          schema:
+            type: integer
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Specialization'
+components:
+  schemas:
+    Specialization:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 7
+        name:
+          type: string
+          example: Oncology
+    Function:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Doctor
+    Room:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        number:
+          type: integer
+          example: 4
+        capacity:
+          type: integer
+          example: 1
+        specialization_id:
+          type: integer
+          example: 1
+        is_available:
+          type: boolean
+          example: true
+    PatientDTO:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: Ion
+        lastName:
+          type: string
+          example: Popescu
+        gender:
+          type: string
+          example: M
+        birthDate:
+          type: string
+          format: date-time
+          example: 01-03-1975
+        address:
+          type: string
+          example: Calea Crangasi 100
+        cnp:
+          type: integer
+          example: 1750301228901
+        serial:
+          type: string
+          example: IF
+        number:
+          type: integer
+          example: 111111
+    InsuranceType:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        insuranceType:
+          type: string
+          example: Privata
+    EvolutionAndTreatment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        details:
+          type: string
+          format: text
+          example: Operatia s-a finalizat cu succes
+        start_date:
+          type: string
+          format: date
+          example: 05-04-2023
+        end_date:
+          type: string
+          format: date
+          example: 15-04-2023
+    RoomOccupancy:
+      type: object
+      properties:
+        totalRooms:
+          type: integer
+          example: 100
+        fullRooms:
+          type: integer
+          example: 50
+    PatientFileDTO:
+      type: object
+      properties:
+        isInsured:
+          type: boolean
+          example: true
+        admissionDate:
+          type: string
+          format: date
+          example: 05-04-2023
+        dischargeDate:
+          type: string
+          format: date
+          example: 15-04-2023
+        initialDiagnosis:
+          type: string
+          example: Apendicita
+        seventyTwoHourDiagnosis:
+          type: string
+          example: Peritonita
+        finalDiagnosis:
+          type: string
+          example: Peritonita
+        medicTeam:
+          type: string
+          example: Dr. Popescu
+        surgeryDetails:
+          type: string
+          example: Operatie de urgenta din cauza raspandirii infectiei in abdomen
+        surgeryDate:
+          type: string
+          format: date
+          example: 08-05-2023
+        historyAntecedents:
+          type: string
+          example: Fara antecedente
+        historyLivingWorkingConditions:
+          type: string
+        historyBehaviors:
+          type: string
+        historyMedicationBeforeHospitalization:
+          type: string
+        historyGeneralClinicalExamination:
+          type: string
+        historyDisease:
+          type: string
+        insuranceType:
+          $ref: "#/components/schemas/InsuranceType"
+    AdmissionType:
+      type: object
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+
